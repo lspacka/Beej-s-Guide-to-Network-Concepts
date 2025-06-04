@@ -15,3 +15,15 @@ it uses a routing table
 
 ### Speculate on why the IP header wraps up the TCP header in the layered model, and not the other way around.
 if the TCP header wraps the IP header there's no way to know where to send the data, as the TCP header only has a port number. 
+
+### What is the benefit to having a static IP? How does it relate to DNS?
+the benefit is that the website will be easily reachable because the DNS entry stays the same, there is no need to update it.
+
+### Speculate on why accept() returns a new socket as opposed to just reusing the one we called listen() with.
+to support concurrency ig
+
+### What would happen if the server didn’t loop to another accept() call? What would happen when a second client tried to connect?
+since the server is listening for connections but not accepting, the client's request is not received, so there's no connection established.
+
+### Speculate about why ports exist. What functionality do they make possible that plain IP addresses do not?
+IP addresses only purpose is to route data to a specific host. a port numbers is associated with a specific service or program. just the IP address alone wouldnt deliver the data to the receiving service.
