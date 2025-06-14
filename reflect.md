@@ -26,4 +26,8 @@ to support concurrency ig
 since the server is listening for connections but not accepting, the client's request is not received, so there's no connection established.
 
 ### Speculate about why ports exist. What functionality do they make possible that plain IP addresses do not?
-IP addresses only purpose is to route data to a specific host. a port numbers is associated with a specific service or program. just the IP address alone wouldnt deliver the data to the receiving service.
+IP addresses only purpose is to route data to a specific host. a port numbers is associated with a specific service or program and different protocols. just the IP address alone wouldnt deliver the data to the receiving service.
+
+### Reflect on some of the advantages of the subnet concept as a way of dividing the global address space.
+
+

@@ -8,11 +8,16 @@ if len(sys.argv) != 3:
 host = sys.argv[1]
 try:
     port = int(sys.argv[2])
+    if not 1 <= port <= 65535: 
+        print("error: port must be between 1 and 65535") 
+        sys.exit(1)
 except ValueError:
     print("error: port must be a number")
     sys.exit(1)
 
-req = f'GET / HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n'
+payload = 'name=etilber&message=Hi!'
+req = f'GET /file.html HTTP/1.1\r\nHost: {host}\r\nContent-Type: text/plain\r\nContent-Length: {len(payload)}\r\nConnection: close\r\n\r\n'
+req += payload
 req = req.encode('utf-8')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
