@@ -56,31 +56,14 @@ try:
             base_dir = os.path.abspath('.')
             file_path = file_path.lstrip('/')
             file_path = os.path.join(base_dir, file_path)
-            # file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_path.lstrip('/'))     # ?
-            # chatgpt
-            # decoded_path = urllib.parse.unquote(file_path)
-            # norm_path = os.path.normpath(decoded_path.lstrip('/'))
-            # full_path = os.path.join(base_dir, norm_path)
             dir_listing = []
 
-            # # Normalize and construct file path
-            # file_path = file_path.lstrip('/')
-            # if '..' in file_path:
-            #     print(f"Security warning: Path traversal attempt in {file_path} from {new_conn[1][0]}")
-            #     send_response(new_socket, '403 Forbidden', 'text/plain', b'403 Forbidden: Path traversal detected\n')
-            #     continue
-            # file_path = os.path.normpath(file_path)
-            # file_path = os.path.join(base_dir, file_path)
-
             # path resolution check
-            print("HI THERE, WORLD")
-            print(f"Base Dir: {base_dir}")
-            print(f"Requested file_path: {file_path}")
-            print(f"Real path: {os.path.realpath(file_path)}")
-            print(f"Base dir: {os.path.realpath(base_dir)}")
+            # print(f"Base Dir: {base_dir}")
+            # print(f"Requested file_path: {file_path}")
+            # print(f"Real path: {os.path.realpath(file_path)}")
+            # print(f"Base dir: {os.path.realpath(base_dir)}")
 
-            # file path security check
-            # if not os.path.realpath(file_path).startswith(os.path.realpath(base_dir)):
             file_path = os.path.abspath(file_path)
             if not file_path.startswith(base_dir):
                 print(f"Security warning: Attempted access to {file_path} from {new_conn}[1][0]")
@@ -126,13 +109,22 @@ try:
                             <h1>Directory Listing:</h1>
                             <ul style="padding:0">
                 """
-                # print(html_string)
-                # html_string.encode('utf-8')
-                dir_listing = os.listdir(file_path)
+                # fix here
+                if (file_path == base_dir):
+                    dir_listing = os.listdir(base_dir)
+                    for item in dir_listing:
+                        if (os.path.isdir(item) and os.path.basename(item) != ".git"):
+                            html_string += f"<li><a href=\"/files\">{item}</a></li>"
+                        else:
+                            html_string += f"<li>{item}</li>"
+                else:
+                    dir_listing = os.listdir(file_path)
+                    for item in dir_listing:
+                        html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
 
-                for item in dir_listing:
-                    # html_string += f"<li>{item}</li>"
-                    html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
+                # for item in dir_listing:
+                #     # html_string += f"<li>{item}</li>"
+                #     html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
                 
                 html_string += """
                             </ul>
@@ -163,31 +155,6 @@ try:
 
             send_response(new_socket, status, content_type, data)
 
-            # try:
-            #     print(f"Received Request from {new_conn[1][0]}")
-            #     print(f"Method: {request_method}")
-            #     # print(f'Payload: {payload}')
-            #     # print(f'Path: {file_path}')
-            #     # print(f'File: {file_name}')
-            #     # print(f'Extension: {file_extension}')
-            #     print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
-            # except IndexError:
-            #     print(f"received malformed request from new_conn[1][0]")
-            #     new_socket.close()
-            #     continue
-            # form & send response
-            # response = (
-            #     f"HTTP/1.1 {status}\r\n"
-            #     f"Content-Type: {content_type}\r\n"
-            #     f"Content-Length: {content_length}\r\n"
-            #     f"Connection: close\r\n\r\n"
-            # )
-
-            # response = response.encode('utf-8') + data 
-            
-            # new_socket.send(response)
-            # new_socket.close()
-            # continue
         else:
             s.close()
             break
