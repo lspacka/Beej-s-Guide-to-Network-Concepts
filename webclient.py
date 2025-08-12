@@ -16,8 +16,9 @@ except ValueError:
     sys.exit(1)
 
 payload = 'name=etilber&message=Hi!'
-req = f'GET /files/ HTTP/1.1\r\nHost: {host}\r\nContent-Type: text/plain\r\nContent-Length: {len(payload)}\r\nConnection: close\r\n\r\n'
-req += payload
+req = f'GET /../../../../../../../../ HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n'
+# req = f'GET /../secret/secret.txt HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Python-Client/1.0\r\nAccept: */*\r\nConnection: close\r\n\r\n'
+# req += payload
 req = req.encode('utf-8')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

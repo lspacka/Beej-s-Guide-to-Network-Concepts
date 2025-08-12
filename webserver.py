@@ -2,6 +2,17 @@ import socket
 import sys
 import os
 
+def send_response(socket, status, content_type, data):
+    content_length = len(data)
+    response = (
+        f"HTTP/1.1 {status}\r\n"
+        f"Content-Type: {content_type}\r\n"
+        f"Content-Length: {content_length}\r\n"
+        f"Connection: close\r\n\r\n" 
+    ).encode('utf-8') + data
+    socket.send(response)
+    socket.close()
+
 if len(sys.argv) != 2:
     print("usage: server.py <port>")
     sys.exit(1)
@@ -41,15 +52,42 @@ try:
             first_line = request_str.split('\r\n')[0]
             request_method = first_line.split(' ')[0]
             file_path = first_line.split(' ')[1]
-            file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_path.lstrip('/'))
-            # get local path
-            # this_path = os.path.dirname(os.path.abspath(__file__))
+            # base_dir = os.path.dirname(os.path.abspath(__file__))
+            base_dir = os.path.abspath('.')
+            file_path = file_path.lstrip('/')
+            file_path = os.path.join(base_dir, file_path)
+            # file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_path.lstrip('/'))     # ?
+            # chatgpt
+            # decoded_path = urllib.parse.unquote(file_path)
+            # norm_path = os.path.normpath(decoded_path.lstrip('/'))
+            # full_path = os.path.join(base_dir, norm_path)
             dir_listing = []
-            # if (os.path.isdir(file_path)):
-            #     print("its a folder")
-            #     dir_listing = os.listdir(file_path)
-            # else:
-            #     print("its a file")
+
+            # # Normalize and construct file path
+            # file_path = file_path.lstrip('/')
+            # if '..' in file_path:
+            #     print(f"Security warning: Path traversal attempt in {file_path} from {new_conn[1][0]}")
+            #     send_response(new_socket, '403 Forbidden', 'text/plain', b'403 Forbidden: Path traversal detected\n')
+            #     continue
+            # file_path = os.path.normpath(file_path)
+            # file_path = os.path.join(base_dir, file_path)
+
+            # path resolution check
+            print("HI THERE, WORLD")
+            print(f"Base Dir: {base_dir}")
+            print(f"Requested file_path: {file_path}")
+            print(f"Real path: {os.path.realpath(file_path)}")
+            print(f"Base dir: {os.path.realpath(base_dir)}")
+
+            # file path security check
+            # if not os.path.realpath(file_path).startswith(os.path.realpath(base_dir)):
+            file_path = os.path.abspath(file_path)
+            if not file_path.startswith(base_dir):
+                print(f"Security warning: Attempted access to {file_path} from {new_conn}[1][0]")
+                send_response(new_socket, '403 Forbidden', 'text/plain', b'403 Forbidden: Access outside root directory\n')
+                continue
+
+            # file_path = full_path
 
             # strip file path
             file_name = os.path.split(file_path)[-1]
@@ -74,47 +112,81 @@ try:
                 case _:
                     content_type = 'application/octet-stream'
 
-            content_length = 13
+            content_length = 13         # default content length
 
             if (os.path.isdir(file_path)):
                 print("its a folder")
+                html_string = """
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                            <title>Directory Listing</title>
+                        </head>
+                        <body>
+                            <h1>Directory Listing:</h1>
+                            <ul style="padding:0">
+                """
+                # print(html_string)
+                # html_string.encode('utf-8')
                 dir_listing = os.listdir(file_path)
-                dir_listing = str(dir_listing)
-                dir_listing = dir_listing.encode('utf-8')
-                data = dir_listing
+
+                for item in dir_listing:
+                    # html_string += f"<li>{item}</li>"
+                    html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
+                
+                html_string += """
+                            </ul>
+                        </body>
+                    </html>
+                """
+
+                # dir_listing = str(dir_listing)
+                # dir_listing = dir_listing.encode('utf-8')
+                # data = dir_listing
+                data = html_string.encode('utf-8')
                 content_type = 'text/html'
+                content_length = len(data)
                 status = '200 OK'
-                # response += dir_listing
             else:
                 print("its a file")
                 try:
                     with open(file_path, "rb") as fp:
                         data = fp.read()
                         status = '200 OK'
-                        content_length = len(data)
-                        # return data
+                        # content_length = len(data)
                 except:
                     status = '404 Not Found'
                     data = b'404 Not Found\n'
-                    # content_type = 'text/plain'
-                # response += data 
 
             # payload = request_str.split('\r\n\r\n')[1]
             # response += f'\nPayload: {payload}'
 
-            # form & send response
-            response = (
-                f"HTTP/1.1 {status}\r\n"
-                f"Content-Type: {content_type}\r\n"
-                f"Content-Length: {content_length}\r\n"
-                f"Connection: close\r\n\r\n"
-            )
+            send_response(new_socket, status, content_type, data)
 
-            response = response.encode('utf-8')
-            response += data 
+            # try:
+            #     print(f"Received Request from {new_conn[1][0]}")
+            #     print(f"Method: {request_method}")
+            #     # print(f'Payload: {payload}')
+            #     # print(f'Path: {file_path}')
+            #     # print(f'File: {file_name}')
+            #     # print(f'Extension: {file_extension}')
+            #     print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
+            # except IndexError:
+            #     print(f"received malformed request from new_conn[1][0]")
+            #     new_socket.close()
+            #     continue
+            # form & send response
+            # response = (
+            #     f"HTTP/1.1 {status}\r\n"
+            #     f"Content-Type: {content_type}\r\n"
+            #     f"Content-Length: {content_length}\r\n"
+            #     f"Connection: close\r\n\r\n"
+            # )
+
+            # response = response.encode('utf-8') + data 
             
-            new_socket.send(response)
-            new_socket.close()
+            # new_socket.send(response)
+            # new_socket.close()
             # continue
         else:
             s.close()
@@ -123,8 +195,8 @@ try:
             print(f"Received Request from {new_conn[1][0]}")
             print(f"Method: {request_method}")
             # print(f'Payload: {payload}')
-            print(f'Path: {file_path}')
-            print(f'File: {file_name}')
+            # print(f'Path: {file_path}')
+            # print(f'File: {file_name}')
             # print(f'Extension: {file_extension}')
             print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
         except IndexError:
