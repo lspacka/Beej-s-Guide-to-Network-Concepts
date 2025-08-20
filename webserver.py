@@ -48,34 +48,25 @@ try:
             continue
 
         if request_data:
-            # get first line & file path
+            # get first line
             first_line = request_str.split('\r\n')[0]
             request_method = first_line.split(' ')[0]
+            # get file path & base directory
             file_path = first_line.split(' ')[1]
-            # base_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = file_path.lstrip('/')   
             base_dir = os.path.abspath('.')
-            file_path = file_path.lstrip('/')
             file_path = os.path.join(base_dir, file_path)
             dir_listing = []
 
-            # path resolution check
-            # print(f"Base Dir: {base_dir}")
-            # print(f"Requested file_path: {file_path}")
-            # print(f"Real path: {os.path.realpath(file_path)}")
-            # print(f"Base dir: {os.path.realpath(base_dir)}")
-
             file_path = os.path.abspath(file_path)
-            if not file_path.startswith(base_dir):
+            if not file_path.startswith(base_dir + os.sep):
                 print(f"Security warning: Attempted access to {file_path} from {new_conn}[1][0]")
                 send_response(new_socket, '403 Forbidden', 'text/plain', b'403 Forbidden: Access outside root directory\n')
                 continue
 
-            # file_path = full_path
-
-            # strip file path
-            file_name = os.path.split(file_path)[-1]
-            # get extension
-            file_ext = os.path.splitext(file_name)[-1]
+            # get file extension
+            file_name = os.path.split(file_path)[1]
+            file_ext = os.path.splitext(file_name)[1]
             #set content type
             match file_ext:
                 case '':
@@ -95,10 +86,9 @@ try:
                 case _:
                     content_type = 'application/octet-stream'
 
-            content_length = 13         # default content length
+            # content_length = 13         # default content length
 
             if (os.path.isdir(file_path)):
-                print("its a folder")
                 html_string = """
                     <!DOCTYPE html>
                     <html>
@@ -110,6 +100,8 @@ try:
                             <ul style="padding:0">
                 """
                 # fix here
+                # 1. change hardcoded / for os.sep
+                # 2. instead of showing the root dir content, serve index.html
                 if (file_path == base_dir):
                     dir_listing = os.listdir(base_dir)
                     for item in dir_listing:
@@ -121,10 +113,6 @@ try:
                     dir_listing = os.listdir(file_path)
                     for item in dir_listing:
                         html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
-
-                # for item in dir_listing:
-                #     # html_string += f"<li>{item}</li>"
-                #     html_string += f"<p><a href=\"/files/{item}\">{item}</a></p>"
                 
                 html_string += """
                             </ul>
@@ -132,15 +120,12 @@ try:
                     </html>
                 """
 
-                # dir_listing = str(dir_listing)
-                # dir_listing = dir_listing.encode('utf-8')
-                # data = dir_listing
                 data = html_string.encode('utf-8')
                 content_type = 'text/html'
                 content_length = len(data)
                 status = '200 OK'
             else:
-                print("its a file")
+                # print("its a file")
                 try:
                     with open(file_path, "rb") as fp:
                         data = fp.read()
@@ -161,11 +146,11 @@ try:
         try:
             print(f"Received Request from {new_conn[1][0]}")
             print(f"Method: {request_method}")
+            print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
             # print(f'Payload: {payload}')
             # print(f'Path: {file_path}')
             # print(f'File: {file_name}')
             # print(f'Extension: {file_extension}')
-            print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
         except IndexError:
             print(f"received malformed request from new_conn[1][0]")
             new_socket.close()

@@ -2,7 +2,7 @@ import socket
 import sys
 
 if len(sys.argv) != 3:
-    print('usage: client.py <host> <port>')
+    print('usage: webclient.py <host> <port>')
     sys.exit(1)
 
 host = sys.argv[1]
@@ -15,10 +15,7 @@ except ValueError:
     print("error: port must be a number")
     sys.exit(1)
 
-payload = 'name=etilber&message=Hi!'
-req = f'GET /../../../../../../../../ HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n'
-# req = f'GET /../secret/secret.txt HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Python-Client/1.0\r\nAccept: */*\r\nConnection: close\r\n\r\n'
-# req += payload
+req = f'GET /files/file.txt HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n'
 req = req.encode('utf-8')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

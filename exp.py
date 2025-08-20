@@ -1,5 +1,6 @@
-s = "Hola Miguel"
-b = s.encode("ISO-8859-1")
+import os
 
-print(b)
-print(s)
+str = "wwwwww.tetilber.com"
+str = str.lstrip('w.t')
+
+print(str)
