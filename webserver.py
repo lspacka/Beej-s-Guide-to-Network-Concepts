@@ -125,18 +125,13 @@ try:
                 content_length = len(data)
                 status = '200 OK'
             else:
-                # print("its a file")
                 try:
                     with open(file_path, "rb") as fp:
                         data = fp.read()
                         status = '200 OK'
-                        # content_length = len(data)
                 except:
                     status = '404 Not Found'
                     data = b'404 Not Found\n'
-
-            # payload = request_str.split('\r\n\r\n')[1]
-            # response += f'\nPayload: {payload}'
 
             send_response(new_socket, status, content_type, data)
 
@@ -147,10 +142,6 @@ try:
             print(f"Received Request from {new_conn[1][0]}")
             print(f"Method: {request_method}")
             print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
-            # print(f'Payload: {payload}')
-            # print(f'Path: {file_path}')
-            # print(f'File: {file_name}')
-            # print(f'Extension: {file_extension}')
         except IndexError:
             print(f"received malformed request from new_conn[1][0]")
             new_socket.close()

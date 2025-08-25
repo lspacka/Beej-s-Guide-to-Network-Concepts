@@ -1,3 +1,3 @@
-# Beej’s Guide to Network Concepts
+# Beej’s Guide to Networking Concepts
 
-Assorted code and assignments from [Beej's guide to network concepts](https://beej.us/guide/bgnet0/)
+Assorted code and solutions from [Beej's guide to networking concepts](https://beej.us/guide/bgnet0/)
