@@ -1,6 +1,5 @@
 # p.48 y 55
 # https://chatgpt.com/share/68acc8c7-5080-8005-b78c-96ee6bf1382b
-# |||||
 
 import sys
 import socket
@@ -20,31 +19,25 @@ packet_buffer = b''
 # Returns None if there are no more words, i.e. the server has hung up.
 def get_next_word_packet(s):
     global packet_buffer
-    # while True:
-        # if buffer starts with a complete packet
-        # extract the packet data
-        # strip the packet data off the front of the buffer
-        # return the packet data     
+
     while True:
+        # if buffer starts with a complete packet
         if len(packet_buffer) >= WORD_LEN_SIZE:
             length = int.from_bytes(packet_buffer[:WORD_LEN_SIZE], 'big')
 
             if len(packet_buffer) >= WORD_LEN_SIZE + length:
+                # extract the packet data
                 packet = packet_buffer[:WORD_LEN_SIZE+length]
+                # strip the packet data off the front of the buffer
                 packet_buffer = packet_buffer[WORD_LEN_SIZE+length:]
                 return packet
             
         data = s.recv(BYTES)
         if not data:
             s.close()
-            return
+            return None
         packet_buffer += data
 
-
-# Extract a word from a word packet.
-# word_packet: a word packet consisting of the encoded word length
-# followed by the UTF-8 word.
-# Returns the word decoded as a string.
 def extract_word(word_packet):
     word_packet = word_packet[WORD_LEN_SIZE:]
     word_packet = word_packet.decode()

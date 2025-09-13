@@ -30,4 +30,18 @@ IP addresses only purpose is to route data to a specific host. a port numbers is
 
 ### Reflect on some of the advantages of the subnet concept as a way of dividing the global address space.
 
+### Why is there a three-way handshake to set up a connection? Why not just start transmitting?
+
+### How does a checksum protect against data corruption?
+
+### What’s the main difference in the goals of Flow Control and Congestion Control?
+
+### Reflect on the reasons for switching between Slow Start and Congestion Avoidance. What advantages does each have in different phases of congestion detection?
+
+### What is the purpose of Flow Control?
+
+### Why do people recommend keeping UDP packets small?
+
+### sendto() requires you specify a destination IP and port. Why does the TCP-oriented send() function not require those arguments?
+
 
