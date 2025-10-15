@@ -1,8 +1,4 @@
-# ||||||
-''' - recap subnets
-    - how to determine if tow ip's are on the same subnet?
-    - same as above but for routers and ip's
-'''
+# 
 
 import sys
 import json
@@ -11,65 +7,33 @@ import json
 # Convert a dots-and-numbers IP address to a single 32-bit numeric
 # value of integer type. Returns an integer type.
 def ipv4_to_value(ipv4_addr):
-    """
-    Example:
-
-    ipv4_addr: "255.255.0.0"
-    return:    4294901760  (Which is 0xffff0000 hex)
-
-    ipv4_addr: "1.2.3.4"
-    return:    16909060  (Which is 0x01020304 hex)
-    """
     a, b, c, d = map(int, ipv4_addr.split('.'))
+
     return (a << 24) | (b << 16) | (c << 8) | d
+
 
 # Convert a single 32-bit numeric value of integer type to a
 # dots-and-numbers IP address. Returns a string type.
 def value_to_ipv4(addr):
-    """
-    Example:
-
-    There is only one input value, but it is shown here in 3 bases.
-
-    addr:   0xffff0000 0b11111111111111110000000000000000 4294901760
-    return: "255.255.0.0"
-
-    addr:   0x01020304 0b00000001000000100000001100000100 16909060
-    return: "1.2.3.4"
-    """
-
     return '.'.join(str(addr>>shift & 0xff) for shift in (24, 16, 8, 0))
+
 
 # Given a subnet mask in slash notation, return the value of the mask
 # as a single number of integer type. The input can contain an IP
 # address optionally, but that part should be discarded.
 # Returns an integer type.
 def get_subnet_mask_value(slash):
-    """
-    Example:
-
-    There is only one return value, but it is shown here in 3 bases.
-
-    slash:  "/16"
-    return: 0xffff0000 0b11111111111111110000000000000000 4294901760
-
-    slash:  "10.20.30.40/23"
-    return: 0xfffffe00 0b11111111111111111111111000000000 4294966784
-    """
-
     bitrun = (1 << 32) - 1
     subnet = int(slash.split('/')[-1])
     
     return (bitrun << (32-subnet)) & 0xFFFFFFFF
 
+
+# Given two dots-and-numbers IP addresses and a subnet mask in slash
+# notation, return true if the two IP addresses are on the same subnet.
+# Returns a boolean.
 def ips_same_subnet(ip1, ip2, slash):
     """
-    Given two dots-and-numbers IP addresses and a subnet mask in slash
-    notation, return true if the two IP addresses are on the same
-    subnet.
-
-    Returns a boolean.
-
     FOR FULL CREDIT: this must use your get_subnet_mask_value() and
     ipv4_to_value() functions. Don't do it with pure string
     manipulation.
@@ -89,13 +53,19 @@ def ips_same_subnet(ip1, ip2, slash):
     return: False
     """
 
-    # TODO -- write me!
-    pass
+    subnet_mask = get_subnet_mask_value(slash)
+    ip_1 = ipv4_to_value(ip1)
+    ip_2 = ipv4_to_value(ip2)
+    
+    subnet1 = subnet_mask & ip_1
+    subnet2 = subnet_mask & ip_2
 
+    return subnet1 == subnet2
+
+
+# Return the network portion of an address value as integer type.
 def get_network(ip_value, netmask):
     """
-    Return the network portion of an address value as integer type.
-
     Example:
 
     ip_value: 0x01020304
@@ -103,8 +73,7 @@ def get_network(ip_value, netmask):
     return:   0x01020300
     """
 
-    # TODO -- write me!
-    pass
+    return netmask & ip_value
 
 def find_router_for_ip(routers, ip):
     """

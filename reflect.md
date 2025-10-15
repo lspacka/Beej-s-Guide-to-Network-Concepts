@@ -44,4 +44,14 @@ IP addresses only purpose is to route data to a specific host. a port numbers is
 
 ### sendto() requires you specify a destination IP and port. Why does the TCP-oriented send() function not require those arguments?
 
+### What is the difference between an interior gateway protocol and an external gateway protocol?
 
+### What is the goal of a routing protocol in general?
+
+### What’s an example of a place where an interior gateway protocol would be used? And exterior?
+
+### What does a router use its routing table to determine?
+
+### What does an IP router do next with a packet if the destination IP address is not on one of its local subnets?
+
+### Why would a process send anything to the broadcast address?
