@@ -3,25 +3,16 @@
 import sys
 import json
 
-
-# Convert a dots-and-numbers IP address to a single 32-bit numeric
-# value of integer type. Returns an integer type.
 def ipv4_to_value(ipv4_addr):
     a, b, c, d = map(int, ipv4_addr.split('.'))
 
     return (a << 24) | (b << 16) | (c << 8) | d
 
 
-# Convert a single 32-bit numeric value of integer type to a
-# dots-and-numbers IP address. Returns a string type.
 def value_to_ipv4(addr):
     return '.'.join(str(addr>>shift & 0xff) for shift in (24, 16, 8, 0))
 
 
-# Given a subnet mask in slash notation, return the value of the mask
-# as a single number of integer type. The input can contain an IP
-# address optionally, but that part should be discarded.
-# Returns an integer type.
 def get_subnet_mask_value(slash):
     bitrun = (1 << 32) - 1
     subnet = int(slash.split('/')[-1])
@@ -29,30 +20,7 @@ def get_subnet_mask_value(slash):
     return (bitrun << (32-subnet)) & 0xFFFFFFFF
 
 
-# Given two dots-and-numbers IP addresses and a subnet mask in slash
-# notation, return true if the two IP addresses are on the same subnet.
-# Returns a boolean.
 def ips_same_subnet(ip1, ip2, slash):
-    """
-    FOR FULL CREDIT: this must use your get_subnet_mask_value() and
-    ipv4_to_value() functions. Don't do it with pure string
-    manipulation.
-
-    This needs to work with any subnet from /1 to /31
-
-    Example:
-
-    ip1:    "10.23.121.17"
-    ip2:    "10.23.121.225"
-    slash:  "/23"
-    return: True
-    
-    ip1:    "10.23.230.22"
-    ip2:    "10.24.121.225"
-    slash:  "/16"
-    return: False
-    """
-
     subnet_mask = get_subnet_mask_value(slash)
     ip_1 = ipv4_to_value(ip1)
     ip_2 = ipv4_to_value(ip2)
@@ -63,59 +31,17 @@ def ips_same_subnet(ip1, ip2, slash):
     return subnet1 == subnet2
 
 
-# Return the network portion of an address value as integer type.
 def get_network(ip_value, netmask):
-    """
-    Example:
-
-    ip_value: 0x01020304
-    netmask:  0xffffff00
-    return:   0x01020300
-    """
-
     return netmask & ip_value
 
+
 def find_router_for_ip(routers, ip):
-    """
-    Search a dictionary of routers (keyed by router IP) to find which
-    router belongs to the same subnet as the given IP.
+    for rd_ip, router_data in routers.items():
+        mask = router_data.get("netmask")
+        if ips_same_subnet(ip, rd_ip, mask):
+            return rd_ip
 
-    Return None if no routers is on the same subnet as the given IP.
-
-    FOR FULL CREDIT: you must do this by calling your ips_same_subnet()
-    function.
-
-    Example:
-
-    [Note there will be more data in the routers dictionary than is
-    shown here--it can be ignored for this function.]
-
-    routers: {
-        "1.2.3.1": {
-            "netmask": "/24"
-        },
-        "1.2.4.1": {
-            "netmask": "/24"
-        }
-    }
-    ip: "1.2.3.5"
-    return: "1.2.3.1"
-
-
-    routers: {
-        "1.2.3.1": {
-            "netmask": "/24"
-        },
-        "1.2.4.1": {
-            "netmask": "/24"
-        }
-    }
-    ip: "1.2.5.6"
-    return: None
-    """
-
-    # TODO -- write me!
-    pass
+    return None
 
 # Uncomment this code to have it run instead of the real main.
 # Be sure to comment it back out before you submit!

@@ -1,4 +1,3 @@
-# |||||
 import json
 
 # routers = json.loads("example1.json")
@@ -37,10 +36,20 @@ def find_router_for_ip(routers, ip):
     with open(routers, 'r') as f:
         rd = json.load(f)
 
-    return rd
+    routers = rd.get("routers", {})
+
+    for rd_ip, router_data in routers.items():
+        mask = router_data.get("netmask")
+        if ips_same_subnet(ip, rd_ip, mask):
+            return rd_ip
+        # print(ip, "→", mask)
+
+    return None
+    
+
 # print(value_to_ipv4(16909060))
 # print(ipv4_to_value("1.2.3.4"))
 # print(get_subnet_mask_value("10.20.30.40/23"))
 # print(ips_same_subnet("10.23.121.17", "10.23.121.225", "/23"))
 # print(hex(get_network(0x01020304, 0xffffff00)))
-print(find_router_for_ip('netfuncs/example1.json', '1.2.3.4'))
+print(find_router_for_ip('netfuncs/example1.json', "10.34.53.111"))
