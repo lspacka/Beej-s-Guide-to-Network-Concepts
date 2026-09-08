@@ -30,6 +30,7 @@ def get_next_word_packet(s):
                 packet = packet_buffer[:WORD_LEN_SIZE+length]
                 # strip the packet data off the front of the buffer
                 packet_buffer = packet_buffer[WORD_LEN_SIZE+length:]
+                
                 return packet
             
         data = s.recv(BYTES)

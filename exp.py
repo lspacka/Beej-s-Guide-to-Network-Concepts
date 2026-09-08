@@ -47,9 +47,11 @@ def find_router_for_ip(routers, ip):
     return None
     
 
-# print(value_to_ipv4(16909060))
+print(value_to_ipv4(16909060))
 # print(ipv4_to_value("1.2.3.4"))
 # print(get_subnet_mask_value("10.20.30.40/23"))
 # print(ips_same_subnet("10.23.121.17", "10.23.121.225", "/23"))
 # print(hex(get_network(0x01020304, 0xffffff00)))
-print(find_router_for_ip('netfuncs/example1.json', "10.34.53.111"))
+# net = get_network(0x01020304, 0xffffff00)
+# print(value_to_ipv4(net))
+# print(find_router_for_ip('netfuncs/example1.json', "10.34.53.111"))

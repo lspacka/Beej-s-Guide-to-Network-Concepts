@@ -8,7 +8,7 @@ it's a set of rules for establishing communication.
 since each layer is just responsible for its own encapsulation, it doesnt need to know what the other layers are doing. each layer is associated with its own set of protocols.
 
 ### What are the practical differences between a WiFi network and a wired network?
-one consists of computers connected to the same access point, and the other of computers wired together. at a low level they use the ethernet protocol.
+one consists of computers connected to the same access point, and the other of computers wired together. at a low level they both use the ethernet protocol.
 
 ### When a router sees an IP address, how does it know where to forward it?
 it uses a routing table
@@ -55,3 +55,11 @@ IP addresses only purpose is to route data to a specific host. a port numbers is
 ### What does an IP router do next with a packet if the destination IP address is not on one of its local subnets?
 
 ### Why would a process send anything to the broadcast address?
+
+### What’s your MAC address on your computer? Do an Internet search to find how to look it up.
+
+### What’s the deal with frames versus packets in Ethernet? Where in the ISO OSI network stack do they live?
+
+### What’s the difference between a byte and an octet?
+
+### What’s the main difference between CSMA/CD and CSMA/CA?

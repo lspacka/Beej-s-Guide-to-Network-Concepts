@@ -4,12 +4,14 @@ import os
 
 def send_response(socket, status, content_type, data):
     content_length = len(data)
+
     response = (
         f"HTTP/1.1 {status}\r\n"
         f"Content-Type: {content_type}\r\n"
         f"Content-Length: {content_length}\r\n"
         f"Connection: close\r\n\r\n" 
     ).encode('utf-8') + data
+
     socket.send(response)
     socket.close()
 
@@ -19,12 +21,11 @@ if len(sys.argv) != 2:
 
 try:
     port = int(sys.argv[1])
+    if not 1 <= port <= 65535:
+        print("error: port must be between 1 and 65535")
+        sys.exit(1)
 except ValueError:
     print("error: port must be a number\n")
-    sys.exit(1)
-
-if not 1 <= port <= 65535:
-    print("error: port must be between 1 and 65535")
     sys.exit(1)
 
 resp_msg = 'Hello client!'
@@ -67,7 +68,8 @@ try:
             # get file extension
             file_name = os.path.split(file_path)[1]
             file_ext = os.path.splitext(file_name)[1]
-            #set content type
+            # set content type
+            # refactor
             match file_ext:
                 case '':
                     content_type = 'text/html'
@@ -140,7 +142,7 @@ try:
             break
         try:
             print(f"Received Request from {new_conn[1][0]}")
-            print(f"Method: {request_method}")
+            # print(f"Method: {request_method}")
             print(f"\nFull Request:\n{request_str.rstrip('\r\n')}\n")
         except IndexError:
             print(f"received malformed request from new_conn[1][0]")
